@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,19 +12,14 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { signIn, loading } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
   
-  // Get the redirect path from location state, or default to dashboard
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/dashboard";
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) return;
     
     try {
       await signIn(email, password);
-      navigate(from, { replace: true });
+      // Navigation is now handled in AuthContext
     } catch (error) {
       console.error("Login error:", error);
     }

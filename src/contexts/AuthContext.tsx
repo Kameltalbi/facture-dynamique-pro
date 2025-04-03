@@ -1,6 +1,6 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 
 interface User {
@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Check if user is logged in when component mounts
   useEffect(() => {
@@ -65,7 +66,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(userWithoutPassword as User);
         localStorage.setItem('user', JSON.stringify(userWithoutPassword));
         toast.success('Connexion réussie');
-        navigate('/dashboard');
+        
+        // Get the redirect path from location state, or default to dashboard
+        const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/dashboard";
+        navigate(from, { replace: true });
       } else {
         toast.error('Email ou mot de passe incorrect');
       }
